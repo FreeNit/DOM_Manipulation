@@ -17,12 +17,21 @@ const movies = [];
 
 /* FUNCTIONS */
 
+const toggleBackdroup = ()=>{
+    backdrop.classList.toggle('visible');
+};
+
 const updateUI = () => {
     if(movies.length === 0){
         entryTextSection.style.display = 'block';
     } else {
         entryTextSection.style.display = 'none';
     }
+};
+
+const closeMovieDeletionModal = () => {
+    toggleBackdroup();
+    deleteMovieModal.classList.remove('visible');
 };
 
 const deleteMovieHandler = (movieId) => {
@@ -35,20 +44,22 @@ const deleteMovieHandler = (movieId) => {
     }
     movies.splice(movieIndex, 1);
     const listRoot = document.getElementById('movie-list');
-    // listRoot.children[movieIndex].remove();
-    listRoot.removeChild(listRoot.children[movieIndex]); // Second variant
-};
-
-const closeMovieDeletionModal = () => {
-    toggleBackdroup();
-    deleteMovieModal.classList.remove('visible');
+    listRoot.children[movieIndex].remove();
+    // listRoot.removeChild(listRoot.children[movieIndex]); // Second variant
+    closeMovieDeletionModal();
+    updateUI();
 };
 
 const startDeleteMovieHandler = (movieId) => {
     deleteMovieModal.classList.add('visible');
     toggleBackdroup();
     const cancelDeletionButton = deleteMovieModal.querySelector('.btn--passive');
-    const confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+    let confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+
+    confirmDeletionButton.replaceWith(confirmDeletionButton.cloneNode(true));
+    confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+
+    cancelDeletionButton.removeEventListener('click', closeMovieDeletionModal);
 
     cancelDeletionButton.addEventListener('click',closeMovieDeletionModal);
     confirmDeletionButton.addEventListener('click', deleteMovieHandler.bind(null, movieId));
@@ -71,10 +82,6 @@ const renderNewMovieElement = (id, title, imageUrl, rating) => {
     listRoot.append(newMovieElement);
 };
 
-const toggleBackdroup = ()=>{
-    backdrop.classList.toggle('visible');
-};
-
 const closeMovieModal = () => {
     addMovieModal.classList.remove('visible');
 };
@@ -92,6 +99,7 @@ const clearMovieInputs = () => {
 
 const cancelAddMovieHandler = () => {
     closeMovieModal();
+    toggleBackdroup();
     clearMovieInputs();
 };
 
@@ -129,6 +137,7 @@ const addMovieHandler = () => {
 const backdropClickHandler = () => {
     closeMovieModal();
     closeMovieDeletionModal();
+    clearMovieInputs();
 };
 
 
